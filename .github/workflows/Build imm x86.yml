@@ -30,6 +30,25 @@ env:
   TZ: Asia/Shanghai
 
 jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Start tmate session
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tmate
+          tmate -S /tmp/tmate.sock new-session -d
+          tmate -S /tmp/tmate.sock wait tmate-ready
+          echo "SSH 地址:"
+          tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'
+          echo "Web 端地址:"
+          tmate -S /tmp/tmate.sock display -p '#{tmate_web}'
+
+      - name: Keep session open
+        run: sleep 3600  # 让 session 运行 1 小时，以便你连接调试
   build:
     runs-on: ubuntu-20.04
 
